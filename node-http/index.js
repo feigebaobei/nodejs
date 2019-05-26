@@ -1,3 +1,8 @@
+/*
+响应指定的静态html文件
+*/
+
+
 // const http = require('http')
 // const hostname = 'localhost'
 // const port = 3000
