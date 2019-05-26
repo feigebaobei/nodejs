@@ -3,7 +3,11 @@ const express = require('express'),
   http = require('http'),
   hostname = 'localhost',
   port = 3000,
+  morgan = require('morgan'),
   app = express()
+
+app.use(morgan('dev'))
+app.use(express.static(__dirname+'/public'))
 
 app.use((req, res, next) => {
   console.log(req.headers)
