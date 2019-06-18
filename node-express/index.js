@@ -6,13 +6,19 @@ const express = require('express'),
   morgan = require('morgan'),
   bodyParser = require('body-parser'),
   app = express(),
+  router = express.Router(),
   dishRouter = require('./routes/dishRouter'),
   promotion = require('./routes/promotion')
+
+router.use('/bar', function (req, res) { // 匹配 /foo/bar
+  res.send('/bar')
+})
 
 app.use(morgan('dev'))
 app.use(bodyParser.json())
 app.use('/dishes', dishRouter)
 app.use('/promotion', promotion)
+app.use('/foo', router)
 
 
 // app.all('/dishes', (req, res, next) => {
