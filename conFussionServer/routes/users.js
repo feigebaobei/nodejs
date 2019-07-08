@@ -75,10 +75,14 @@ router.post('/login',
   // consoles.log(passport.authenticate)
   passport.authenticate('local'),
   (req, res) => {
-  console.log('req', req)
+  console.log('req.body', req.body)
   res.statusCode = 200;
   res.setHeader('Content-Type', 'application/json');
-  res.json({success: true, status: 'You are successfully logged in!'});
+  // 通过验证后在req对象里会多一个属性user。该属性值是数据库里的user数据.
+  // res.json({success: true, status: 'You are successfully logged in!'});
+  res.json({success: true, status: 'You are successfully logged in!', user: req.user, body: req.body, resBody: res.user});
+  // res.json({success: true, status: 'You are successfully logged in!', req: req});
+  // res.json({success: true, status: req.user + 'You are successfully logged in!', req: req});
 });
 
 router.get('/logout', (req, res) => {

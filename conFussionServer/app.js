@@ -7,6 +7,12 @@ var session = require('express-session');
 var FileStore = require('session-file-store')(session);
 var passport = require('passport')
 var authenticate = require('./authenticate')
+// passport.serializeUser(function (user, done) {
+//   done(null, user)
+// })
+// passport.deserializeUser(function (user, done) {
+//   done(null, user)
+// })
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
@@ -41,11 +47,22 @@ app.use(session({
   store: new FileStore()
 }))
 
-app.use(passport.initialize())
-app.use(passport.session())
+app.use(passport.initialize()) // 初始代passport
+app.use(passport.session()) // 因使用session保存登录信息。所以需要使用passport.session()中间件。使用它之前确保在session中保存登录数据。
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
+
+// app.post('/login', passport.authenticate('local', {
+//   successRedirect: '/first',
+//   failureRedirect: '/second'
+// }))
+// app.use('/first', (req, res) => {
+//   res.json({page: 'first'})
+// })
+// app.use('/second', (req, res) => {
+//   res.json({page: 'second'})
+// })
 
 // function auth (req, res, next) {
 //   console.log(req.signedCookies)
