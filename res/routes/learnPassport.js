@@ -2,12 +2,14 @@ var express = require('express')
 var router = express.Router()
 var User = require('../models/user')
 var passport = require('passport')
+var bodyParser = require('body-parser')
+router.use(bodyParser.json())
 
 //
 router.get('', (req, res, next) => {
   res.send('welcome')
 })
-router.get('/signup', (req, res, next) => {
+router.post('/signup', (req, res, next) => {
   console.log(req.body)
   // User.register(new User({username: req.body.username}))
   User.register(new User({username: req.body.username}), req.body.password, (err, user) => {
