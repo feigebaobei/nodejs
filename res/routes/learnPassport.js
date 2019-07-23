@@ -8,6 +8,7 @@ router.get('', (req, res, next) => {
   res.send('welcome')
 })
 router.get('/signup', (req, res, next) => {
+  console.log(req.body)
   // User.register(new User({username: req.body.username}))
   User.register(new User({username: req.body.username}), req.body.password, (err, user) => {
     if (err) {
@@ -22,8 +23,6 @@ router.get('/signup', (req, res, next) => {
       })
     }
   })
-
-  res.send('welcome')
 })
 router.get('/login', (req, res, next) => {
   res.send('welcome')
