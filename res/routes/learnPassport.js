@@ -3,14 +3,14 @@ var router = express.Router()
 var User = require('../models/user')
 var passport = require('passport')
 var bodyParser = require('body-parser')
-router.use(bodyParser.json())
+router.use(bodyParser.json()) // 请求体 => json并放在req.body
 
 //
 router.get('', (req, res, next) => {
   res.send('welcome')
 })
 router.post('/signup', (req, res, next) => {
-  console.log(req.body)
+  // console.log(req.body)
   // User.register(new User({username: req.body.username}))
   User.register(new User({username: req.body.username}), req.body.password, (err, user) => {
     if (err) {
@@ -26,6 +26,12 @@ router.post('/signup', (req, res, next) => {
     }
   })
 })
+// 学习body-parser
+router.post('/reqbody', (req, res, next) => {
+  // res.send('welcome')
+  res.send(req.body)
+})
+// learn passport
 router.get('/login', (req, res, next) => {
   res.send('welcome')
 })
