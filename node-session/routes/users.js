@@ -71,7 +71,10 @@ router.post('/login', (req, res, next) => {
         err.status = 403
         next(err)
       }
-    }).catch(err => next(err))
+    // }).catch(err => next(err))
+    }).catch(err => {
+      res.send(err)
+    })
   }
 })
 router.get('/logout', (req, res, next) => {

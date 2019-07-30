@@ -9,6 +9,7 @@ var FileStore = require('session-file-store')(session)
 
 var index = require('./routes/index');
 var users = require('./routes/users');
+var news = require('./routes/news');
 
 const mongoose = require('mongoose')
 const url = 'mongodb://localhost:27017/confusion'
@@ -31,9 +32,6 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 // app.use(cookieParser());
 
-app.use('/', index);
-app.use('/users', users);
-
 app.use(session({
   name: 'session-id',
   secret: '12345-67890',
@@ -41,6 +39,23 @@ app.use(session({
   resave: false,
   store: new FileStore()
 }))
+
+app.use('/', index);
+app.use('/users', users);
+
+let authFn = (req, res, next) => {
+  console.log(req.session)
+  if (req.session.auth) {
+    next()
+  } else {
+    var err = new Error('You are not authenticated!')
+    err.status = 403
+    next(err)
+  }
+}
+
+app.use(authFn)
+app.use('/news', news)
 
 app.use(express.static(path.join(__dirname, 'public')));
 
