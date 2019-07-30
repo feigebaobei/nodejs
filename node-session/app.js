@@ -10,6 +10,14 @@ var FileStore = require('session-file-store')(session)
 var index = require('./routes/index');
 var users = require('./routes/users');
 
+const mongoose = require('mongoose')
+const url = 'mongodb://localhost:27017/confusion'
+const connect = mongoose.connect(url, {useNewUrlParser: true, useCreateIndex: true})
+
+connect.then(db => {
+  console.log('Connect correct to server')
+}, err => {console.log(err)})
+
 var app = express();
 
 // view engine setup
@@ -22,17 +30,19 @@ app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 // app.use(cookieParser());
+
+app.use('/', index);
+app.use('/users', users);
+
 app.use(session({
   name: 'session-id',
   secret: '12345-67890',
   saveUninitialized: false,
-  resave: false
-  // store: new FileStore()
+  resave: false,
+  store: new FileStore()
 }))
-app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/', index);
-app.use('/users', users);
+app.use(express.static(path.join(__dirname, 'public')));
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
