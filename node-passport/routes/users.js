@@ -41,6 +41,25 @@ router.get('/logout', (req, res, next) => {
     next(err)
   }
 })
+
+// 使用github 登录 验证 登出
+router.post('/github/login', passport.authenticate('github'), (req, res, next) => {
+  res.statusCode = 200
+  res.json({success: true, status: 'you are successful logged in!'})
+})
+router.get('/github/logout', (req, res, next) => {
+  if (req.session) {
+    req.session.destroy()
+    res.clearCookie('session-id')
+    res.send('登出成功。重定向的事让前端做')
+  } else {
+    var err = new Error('you are not logged in!')
+    err.status = 403
+    next(err)
+  }
+})
+// 使用github 登录 验证 登出
+
 router.use((err, req, res, next) => {
   console.log(err)
   if (err) {
