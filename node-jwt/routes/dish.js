@@ -10,6 +10,7 @@ router.route('/')
   res.send(`get`)
 })
 .post(authenticate.verifyUser, (req, res, next) => {
+// .post((req, res, next) => {
   res.send(`post`)
 })
 .put(authenticate.verifyUser, (req, res, next) => {
