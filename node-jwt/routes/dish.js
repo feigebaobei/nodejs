@@ -11,6 +11,10 @@ router.route('/')
 })
 .post(authenticate.verifyUser, (req, res, next) => {
 // .post((req, res, next) => {
+  let header = req.headers
+  let rawToken = header.authorization
+  let token = rawToken.split(' ')[1]
+  // console.log('rawToken', rawToken)
   res.send(`post`)
 })
 .put(authenticate.verifyUser, (req, res, next) => {
