@@ -13,37 +13,38 @@ router.get('/', function(req, res, next) {
 router.get('/auth', function(req, res, next) {
   let header = req.headers
   let rawToken = header.authorization
-  let token = rawToken.split(' ')[1]
-  let result = jwt.verify(token, config.secretKey, (err) => {
-    switch (err.name) {
-      case 'TokenExpiredError':
-      case 'NotBeforeError':
-      default :
-        let payload = jwt.decode(token)
-        token = authenticate.getToken({_id: payload._id})
-        res.statusCode = 888 // 这是自定义的状态码
-        res.setHeader('Content-Type', 'application/json')
-        // res.json({
-        //   code: 401,
-        //   data: {
-        //     error: payload
-        //   },
-        //   message: '登录已超时'
-        // })
-        res.json({success: true, token: token, status: '已经刷新token'})
-        break
-      case 'JsonWebTokenError':
-        res.statusCode = 401
-        res.json({
-          code: 401,
-          data: {
-            error: err
-          },
-          message: 'token错误'
-        })
-        break
-    }
-  })
+  if (!rawToken.split(' ').length) {
+    res.json({ // 统一的数据结构方便前端使用
+      code: 403,
+      data: {},
+      message: 'error for get token'
+    })
+  } else {
+    let token = rawToken.split(' ')[1]
+    jwt.verify(token, config.secretKey, err => { // 这里用到jsonwebtoken/config。注意引用
+      switch (err.name) {
+        case 'TokenExpiredError':
+        case 'NotBeforeError':
+          let payload = jwt.decode(token)
+          token = authenticate.getToken({_id: payload._id})
+          res.statusCode = 200
+          res.setHeader('Content-Type', 'application/json')
+          res.json({success: true, token: token, status: '已经刷新token'})
+          break
+        case 'JsonWebTokenError':
+        default:
+          res.statusCode = 401
+          res.json({
+            code: 401,
+            data: {
+              error: err
+            },
+            message: 'token错误'
+          })
+          break
+      }
+      })
+  }
 });
 
 module.exports = router;
