@@ -2,6 +2,8 @@ var express = require('express');
 var path = require('path');
 var favicon = require('serve-favicon');
 var logger = require('morgan');
+var fs = require('fs')
+var FileStreamRotator = require('file-stream-rotator')
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var session = require('express-session')
@@ -9,6 +11,8 @@ var FileStore = require('session-file-store')(session)
 var passport = require('passport')
 var authenticate = require('./authenticate')
 var config = require('./config')
+var logDirectory = path.join(__dirname, 'log')
+var Log = require('./models/log')
 
 var index = require('./routes/index');
 var users = require('./routes/users');
@@ -34,11 +38,49 @@ app.set('view engine', 'jade');
 // uncomment after placing your favicon in /public
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 
+fs.existsSync(logDirectory) || fs.mkdirSync(logDirectory)
+var accesLogStream = FileStreamRotator.getStream({
+  date_format: 'YYYYMMDD',
+  filename: path.join(logDirectory, 'access-%DATE%.log'),
+  frequency: 'daily',
+  verbose: false
+})
+// var writeToDB = (ua, re, a, b) => {
+//   return {
+//     write: (line) => {
+//       console.log(line)
+//     }
+//   }
+//   // Log.register(new Log({}))
+//   // console.log(ua, re, a, b)
+//   // var ele = new Log({
+//   //   userAgent: 'userAgent',
+//   //   referrer: 'referrer'
+//   // })
+//   // ele.save((err) => {
+//   //   console.log('err', err)
+//   // })
+// }
+var writeToDB = {
+  write: function (line) {
+    let [, ua, re] = line.split(' ')
+    var ele = new Log({
+      userAgent: ua,
+      referrer: re
+    })
+    ele.save(err => {
+      if (err) {
+        console.log('err', err)
+      }
+    })
+  }
+}
 // 使用编译后的format
 // let fn = logger.compile(`[joke] :method`)
 // logger.format('nan', fn)
 // app.use(logger('nan'))
-app.use(logger(logger.compile(`[joke] :method`)))
+app.use(logger(logger.compile(`[joke] :req[User-Agent] :req[Referer]`), {stream: accesLogStream})) // 把日志保存在日志文件里
+app.use(logger(logger.compile(`[joke] :req[User-Agent] :req[Referer]`), {stream: writeToDB}))
 
 // 直接使用formatString,不编译。
 // logger.format('nb', '[joke] :method')
