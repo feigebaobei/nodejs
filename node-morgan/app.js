@@ -34,10 +34,29 @@ app.set('view engine', 'jade');
 // uncomment after placing your favicon in /public
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 
-// app.use(logger('dev'));
-app.use(logger('[joke] :method :url :response-time ms'))
+// 使用编译后的format
+// let fn = logger.compile(`[joke] :method`)
+// logger.format('nan', fn)
+// app.use(logger('nan'))
+app.use(logger(logger.compile(`[joke] :method`)))
 
-app.use(bodyParser.json());
+// 直接使用formatString,不编译。
+// logger.format('nb', '[joke] :method')
+// app.use(logger('nb'))
+
+// 直接使用formatFunction,不编译
+// app.use(logger(function (tokens, req, res) {
+//   return [
+//     tokens.method(req, res),
+//     tokens.url(req, res),
+//     tokens.status(req, res),
+//     tokens.res(req, res, 'content-length'), '-',
+//     tokens['response-time'](req, res), 'ms'
+//   ].join(' ')
+// }))
+
+
+// app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 // app.use(cookieParser());
 
