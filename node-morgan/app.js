@@ -45,22 +45,6 @@ var accesLogStream = FileStreamRotator.getStream({
   frequency: 'daily',
   verbose: false
 })
-// var writeToDB = (ua, re, a, b) => {
-//   return {
-//     write: (line) => {
-//       console.log(line)
-//     }
-//   }
-//   // Log.register(new Log({}))
-//   // console.log(ua, re, a, b)
-//   // var ele = new Log({
-//   //   userAgent: 'userAgent',
-//   //   referrer: 'referrer'
-//   // })
-//   // ele.save((err) => {
-//   //   console.log('err', err)
-//   // })
-// }
 var writeToDB = {
   write: function (line) {
     let [, ua, re] = line.split(' ')
@@ -72,6 +56,9 @@ var writeToDB = {
       if (err) {
         console.log('err', err)
       }
+      //  else {
+      //   console.log('ele', ele)
+      // }
     })
   }
 }
@@ -80,7 +67,7 @@ var writeToDB = {
 // logger.format('nan', fn)
 // app.use(logger('nan'))
 app.use(logger(logger.compile(`[joke] :req[User-Agent] :req[Referer]`), {stream: accesLogStream})) // 把日志保存在日志文件里
-app.use(logger(logger.compile(`[joke] :req[User-Agent] :req[Referer]`), {stream: writeToDB}))
+app.use(logger(logger.compile(`[joke] :req[User-Agent] :req[Referer]`), {stream: writeToDB})) // 把日志保存在mongodb文件里
 
 // 直接使用formatString,不编译。
 // logger.format('nb', '[joke] :method')
