@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 var authenticate = require('../authenticate')
 const Dishes = require('../models/dishes')
+var cors = require('./cors')
 // var passport = require('passport')
 var bodyParser = require('body-parser')
 
@@ -11,6 +12,9 @@ router.use(bodyParser.json())
 //   res.render('index', { title: 'Express' });
 // });
 router.route('/')
+.options(cors.coreWithOptions, (req, res) => {
+  res.sendStatus(200)
+})
 // 查询所有dish
 .get((req, res, next) => {
   Dishes.find({}).populate('comments.author').then(dishes => {
@@ -41,7 +45,11 @@ router.route('/')
 })
 
 // 根据dishId查询dish
-router.route('/:dishId').get((req, res, next) => {
+router.route('/:dishId')
+.options(cors.coreWithOptions, (req, res) => {
+  res.sendStatus(200)
+})
+.get((req, res, next) => {
   Dishes.findById(req.params.dishId)
     .populate('comments.author')
     .then(dish => {
@@ -52,6 +60,9 @@ router.route('/:dishId').get((req, res, next) => {
 })
 
 router.route('/:dishId/comments')
+.options(cors.coreWithOptions, (req, res) => {
+  res.sendStatus(200)
+})
 // 根据dishId查询dish的comments
 .get((req, res, next) => {
   Dishes.findById(req.params.dishId)
@@ -96,6 +107,9 @@ router.route('/:dishId/comments')
 
 // 根据dishId及commentId得到comment
 router.route('/:dishId/comments/:commentId')
+.options(cors.coreWithOptions, (req, res) => {
+  res.sendStatus(200)
+})
 .get((req, res, next) => {
   Dishes.findById(req.params.dishId)
     .populate('comments.author')
