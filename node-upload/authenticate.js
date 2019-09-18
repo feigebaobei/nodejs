@@ -40,3 +40,12 @@ exports.verifyUser = passport.authenticate('jwt', {
   session: false,
   failureRedirect: '/error/auth'
 })
+let vf = (req, res, next) => {
+  // console.log(req.user)
+  if (req.user.admin) {
+    next()
+  } else {
+    res.status(401).send('not admin')
+  }
+}
+exports.verifyAdmin = vf

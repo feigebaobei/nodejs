@@ -12,7 +12,7 @@ router.use(bodyParser.json())
 //   res.render('index', { title: 'Express' });
 // });
 router.route('/')
-.options(cors.coreWithOptions, (req, res) => {
+.options(cors.corsWithOptions, (req, res) => {
   res.sendStatus(200)
 })
 // 查询所有dish
@@ -25,7 +25,8 @@ router.route('/')
   }).catch(err => next(err))
 })
 // 添加dish
-.post(authenticate.verifyUser, (req, res, next) => {
+.post(authenticate.verifyUser, authenticate.verifyAdmin, (req, res, next) => {
+  console.log(req.abc)
   let {name, description} = req.body
   let dish = new Dishes({name: name, description: description})
   dish.save(function (err, doc) {
@@ -36,17 +37,17 @@ router.route('/')
   })
 })
 // 
-.put(authenticate.verifyUser, (req, res, next) => {
+.put(authenticate.verifyUser, authenticate.verifyAdmin, (req, res, next) => {
   res.send(`put`)
 })
 // 
-.delete(authenticate.verifyUser, (req, res, next) => {
+.delete(authenticate.verifyUser, authenticate.verifyAdmin, (req, res, next) => {
   res.send(`delete`)
 })
 
 // 根据dishId查询dish
 router.route('/:dishId')
-.options(cors.coreWithOptions, (req, res) => {
+.options(cors.corsWithOptions, (req, res) => {
   res.sendStatus(200)
 })
 .get((req, res, next) => {
@@ -60,7 +61,7 @@ router.route('/:dishId')
 })
 
 router.route('/:dishId/comments')
-.options(cors.coreWithOptions, (req, res) => {
+.options(cors.corsWithOptions, (req, res) => {
   res.sendStatus(200)
 })
 // 根据dishId查询dish的comments
@@ -80,7 +81,7 @@ router.route('/:dishId/comments')
   .catch(err => next(err))
 })
 // 为指定dishId的dish添加comment
-.post(authenticate.verifyUser, (req, res, next) => {
+.post(authenticate.verifyUser, authenticate.verifyAdmin, (req, res, next) => {
   Dishes.findById(req.params.dishId)
     .then(dish => {
       if (dish !== null) {
@@ -107,7 +108,7 @@ router.route('/:dishId/comments')
 
 // 根据dishId及commentId得到comment
 router.route('/:dishId/comments/:commentId')
-.options(cors.coreWithOptions, (req, res) => {
+.options(cors.corsWithOptions, (req, res) => {
   res.sendStatus(200)
 })
 .get((req, res, next) => {
