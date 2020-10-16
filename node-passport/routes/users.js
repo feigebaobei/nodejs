@@ -11,7 +11,7 @@ router.get('/', function(req, res, next) {
 });
 
 router.post('/signup', (req, res, next) => {
-  console.log(req.body)
+  // console.log(req.body)
   User.register(new User({username: req.body.username}),
     req.body.password,
     (err, user) => {
@@ -26,7 +26,9 @@ router.post('/signup', (req, res, next) => {
       }
     })
 })
-router.post('/login', passport.authenticate('local'), (req, res) => {
+router.post('/login',
+  passport.authenticate('local'),
+  (req, res) => {
   res.statusCode = 200
   res.json({success: true, status: 'you are successful logged in!'})
 })

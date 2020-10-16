@@ -12,7 +12,8 @@ var users = require('./routes/users');
 var news = require('./routes/news');
 
 const mongoose = require('mongoose')
-const url = 'mongodb://localhost:27017/confusion'
+// const url = 'mongodb://localhost:27017/confusion'
+const url = 'mongodb://47.94.105.206:27017/mockserver'
 const connect = mongoose.connect(url, {useNewUrlParser: true, useCreateIndex: true})
 
 connect.then(db => {
